@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb" // Ajustez la taille maximale des fonctions Lambda si nécessaire
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/main.py"
+    }
+  ],
+  "functions": {
+    "api/main.py": {
+      "maxDuration": 10
+    }
+  }
+}
