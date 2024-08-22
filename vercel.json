@@ -5,7 +5,7 @@
       "src": "api/main.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb" // Ajustez la taille maximale des fonctions Lambda si nécessaire
+        "maxLambdaSize": "50mb"
       }
     }
   ],
