@@ -1,14 +1,6 @@
 [build]
-  # Répertoire de publication (souvent utilisé pour les sites statiques, pas pour Flask)
-  publish = "public"
-
-  # Commande de construction, si nécessaire
+  # Commande de construction
   command = "pip install -r requirements.txt"
 
-  # Point d'entrée pour Netlify (ex. le répertoire contenant votre application Python)
+  # Point d'entrée pour Netlify
   functions = "api"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/main"
-  status = 200
