@@ -43,7 +43,7 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
-@app.route('/', methods=['POST'])
+@app.route('/api/gemini', methods=['POST'])
 def handle_request():
     try:
         data = request.json
