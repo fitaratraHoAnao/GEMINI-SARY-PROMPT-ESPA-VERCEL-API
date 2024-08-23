@@ -1,6 +1,0 @@
-[build]
-  # Commande de construction
-  command = "pip install -r requirements.txt"
-
-  # Point d'entrée pour Netlify
-  functions = "api"
