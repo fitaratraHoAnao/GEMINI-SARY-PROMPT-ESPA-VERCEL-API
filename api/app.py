@@ -51,28 +51,30 @@ def handle_request():
         custom_id = data.get('customId', '')  # Identifiant de l'utilisateur ou session
         image_url = data.get('link', '')  # URL de l'image
 
-        # Vérification que le prompt et l'URL de l'image sont fournis
-        if not prompt or not image_url:
-            return jsonify({'message': 'Prompt and Image URL are required!'}), 400
-
         # Récupérer l'historique de la session existante ou en créer une nouvelle
         if custom_id not in sessions:
             sessions[custom_id] = []  # Nouvelle session
         history = sessions[custom_id]
 
         # Ajouter l'image à l'historique si elle est présente
-        image_path = download_image(image_url)
-        if image_path:
-            file = upload_to_gemini(image_path)
-            if file:
-                history.append({
-                    "role": "user",
-                    "parts": [file, prompt],
-                })
+        if image_url:
+            image_path = download_image(image_url)
+            if image_path:
+                file = upload_to_gemini(image_path)
+                if file:
+                    history.append({
+                        "role": "user",
+                        "parts": [file, prompt],
+                    })
+                else:
+                    return jsonify({'message': 'Failed to upload image to Gemini'}), 500
             else:
-                return jsonify({'message': 'Failed to upload image to Gemini'}), 500
+                return jsonify({'message': 'Failed to download image'}), 500
         else:
-            return jsonify({'message': 'Failed to download image'}), 500
+            history.append({
+                "role": "user",
+                "parts": [prompt],
+            })
 
         # Démarrer ou continuer une session de chat avec l'historique
         chat_session = model.start_chat(history=history)
@@ -93,7 +95,10 @@ def handle_request():
         print(f"Error processing request: {e}")
         return jsonify({'message': 'Internal Server Error'}), 500
 
+@app.route('/')
+def home():
+    return '<h1>Votre API Gemini est en cours d\'exécution...</h1>'
+
 if __name__ == '__main__':
     # Héberger l'application Flask sur 0.0.0.0 pour qu'elle soit accessible publiquement
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    
