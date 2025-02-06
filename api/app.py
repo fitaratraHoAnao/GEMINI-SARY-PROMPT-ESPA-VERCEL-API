@@ -12,6 +12,12 @@ app = Flask(__name__)
 # Dictionnaire pour stocker les historiques de conversation
 sessions = {}
 
+MAX_MESSAGE_LENGTH = 2000  # Limite approximative pour un message Messenger
+
+def split_message(message, max_length=MAX_MESSAGE_LENGTH):
+    """Divise un message trop long en plusieurs parties."""
+    return [message[i:i + max_length] for i in range(0, len(message), max_length)]
+
 def download_image(url):
     """Télécharge une image depuis une URL et retourne le chemin du fichier temporaire."""
     response = requests.get(url, stream=True)
@@ -81,15 +87,18 @@ def handle_request():
 
         # Envoyer un message dans la session de chat
         response = chat_session.send_message(prompt)
+        response_text = response.text
 
         # Ajouter la réponse du modèle à l'historique
         history.append({
             "role": "model",
-            "parts": [response.text],
+            "parts": [response_text],
         })
 
-        # Retourner la réponse du modèle
-        return jsonify({'message': response.text})
+        # Diviser la réponse si elle est trop longue
+        messages = split_message(response_text)
+        
+        return jsonify({'messages': messages})
 
     except Exception as e:
         print(f"Error processing request: {e}")
